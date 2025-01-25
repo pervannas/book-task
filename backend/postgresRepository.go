@@ -22,6 +22,25 @@ func connectToDatabase() *sql.DB {
 	return db
 }
 
+func setupDatabase() *sql.DB {
+	db := connectToDatabase()
+
+	books, err := getAllBooks(db)
+	if err != nil {
+		log.Fatal("Couldn't find books", err)
+	}
+
+	for i := 0; i < len(books); i++ {
+		deleteBookById(db, books[i].Id)
+	}
+	// TODO: These should be id 1-3 always
+	insertBook(db, "The Fellowship of the Ring")
+	insertBook(db, "The Two Towers")
+	insertBook(db, "The Return of the King")
+
+	return db
+}
+
 func getAllBooks(db *sql.DB) ([]Book, error) {
 	rows, err := db.Query("SELECT id, title FROM book")
 	if err != nil {
@@ -75,6 +94,7 @@ func getBookById(db *sql.DB, id int) (Book, error) {
 }
 
 func updateBookById(db *sql.DB, title string, id int) error {
+	// TODO: Make sure that it does not add a book if there is no book at id
 	_, err := db.Exec("UPDATE book SET title=? WHERE id=?;", title, id)
 	if err != nil {
 		log.Printf("Error while updating value in table\n")

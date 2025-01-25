@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
@@ -33,14 +34,7 @@ func startupAndShutdown(e *echo.Echo, ctx context.Context) {
 	}
 }
 
-func main() {
-	ctx := context.Background()
-
-	db := connectToDatabase()
-
-	defer db.Close()
-
-	e := echo.New()
+func getBooks(e *echo.Echo, db *sql.DB) {
 	e.GET("/book", func(c echo.Context) error {
 		books, err := getAllBooks(db)
 		if err != nil {
@@ -49,7 +43,9 @@ func main() {
 
 		return c.JSON(http.StatusOK, books)
 	})
+}
 
+func getSingleBook(e *echo.Echo, db *sql.DB) {
 	e.GET("/book/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		idInt, err := strconv.Atoi(id)
@@ -63,7 +59,9 @@ func main() {
 
 		return c.JSON(http.StatusOK, book)
 	})
+}
 
+func createBook(e *echo.Echo, db *sql.DB) {
 	e.POST("/book", func(c echo.Context) error {
 		var body Book
 
@@ -76,7 +74,9 @@ func main() {
 		}
 		return c.String(http.StatusOK, "Book created")
 	})
+}
 
+func updateBook(e *echo.Echo, db *sql.DB) {
 	e.PUT("/book", func(c echo.Context) error {
 		var body Book
 
@@ -92,7 +92,9 @@ func main() {
 		}
 		return c.String(http.StatusOK, "Book updated")
 	})
+}
 
+func deleteBook(e *echo.Echo, db *sql.DB) {
 	e.DELETE("/book/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		idInt, err := strconv.Atoi(id)
@@ -105,6 +107,23 @@ func main() {
 		}
 		return c.String(http.StatusOK, fmt.Sprintf("Book with id %d deleted", idInt))
 	})
+}
 
-	startupAndShutdown(e, ctx)
+func main() {
+	db := setupDatabase()
+
+	defer db.Close()
+
+	e := echo.New()
+	getBooks(e, db)
+
+	getSingleBook(e, db)
+
+	createBook(e, db)
+
+	updateBook(e, db)
+
+	deleteBook(e, db)
+
+	startupAndShutdown(e, context.Background())
 }
