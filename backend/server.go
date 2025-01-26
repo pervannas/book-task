@@ -115,6 +115,18 @@ func main() {
 	defer db.Close()
 
 	e := echo.New()
+	// CORS middleware
+	e.Use(echo.MiddlewareFunc(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Response().Header().Set(echo.HeaderAccessControlAllowOrigin, "*") // Allow all origins
+			c.Response().Header().Set(echo.HeaderAccessControlAllowMethods, "GET, POST, PUT, DELETE, OPTIONS")
+			c.Response().Header().Set(echo.HeaderAccessControlAllowHeaders, "Content-Type, Authorization")
+			if c.Request().Method == http.MethodOptions {
+				return c.NoContent(http.StatusNoContent)
+			}
+			return next(c)
+		}
+	}))
 	getBooks(e, db)
 
 	getSingleBook(e, db)
