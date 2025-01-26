@@ -4,23 +4,31 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func connectToDatabase() *sql.DB {
 	dsn := "user:password@tcp(mysql:3306)/db"
-	db, err := sql.Open("mysql", dsn)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Check if the connection is alive
-	if err := db.Ping(); err != nil {
-		log.Fatal(err)
+	for i := 0; i < 10; i++ {
+		log.Printf("Trying to connect to database, attempt %d", i)
+		db, err := sql.Open("mysql", dsn)
+		if err != nil {
+			log.Printf("Error opening database connection, err: %v", err)
+			time.Sleep(2 * time.Second)
+			continue
+		}
+		// Check if the connection is alive
+		if err := db.Ping(); err == nil {
+			fmt.Println("Connected to the database!")
+			return db
+		}
+		time.Sleep(2 * time.Second)
 	}
 
-	fmt.Println("Connected to the database!")
-	return db
+	log.Fatal("Could not connect to database. Terminating application")
+	return nil
 }
 
 func setupDatabase() *sql.DB {
