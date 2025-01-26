@@ -1,0 +1,11 @@
+-- CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+
+-- GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' WITH GRANT OPTION;
+
+-- CREATE USER 'username'@'%' IDENTIFIED BY 'password';
+
+-- GRANT ALL PRIVILEGES ON *.* TO 'username'@'%' WITH GRANT OPTION;
+
+-- FLUSH PRIVILEGES;
+
+CREATE TABLE IF NOT EXISTS book ( id INT AUTO_INCREMENT PRIMARY KEY, title NVARCHAR(100) NOT NULL)

@@ -14,10 +14,8 @@ COPY . .
 # Build the Go application
 RUN GOOS=linux GOARCH=amd64 go build -o myapp .
 
-# Use a smaller image to run the application
+# TODO: Should build as a smaller image, but when running bellow scripts it does not work
 # FROM alpine:latest
-# # Install build dependencies
-# RUN apk add --no-cache build-base
 # # Set the Current Working Directory inside the container
 # WORKDIR /app
 #

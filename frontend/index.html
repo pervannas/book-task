@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show books</title>
+    <script>
+        function fetchHello() {
+            fetch('http://localhost:1323/book')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    // Display the response in the result div
+                    document.getElementById('result').innerText = data;
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Welcome to My Web Page!</h1>
+    <p>This is a simple web page that makes a GET request.</p>
+    <button onclick="fetchHello()">Say Hello</button>
+    <div id="result"></div>
+</body>
+</html>
