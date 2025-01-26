@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Show books</title>
     <script>
-        function fetchHello() {
+        function fetchBooks() {
+          const interval = setInterval(() => {
             fetch('http://localhost:1323/book')
                 .then(response => {
                     if (!response.ok) {
@@ -18,19 +19,18 @@
                     document.getElementById('result').innerText = data;
                 })
                 .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
+                    const message = 'There was a problem with the fetch operation:'
+                    document.getElementById('result').innerText = message;
                 });
+          }, 1000)
         }
 
-        function updateEverySecond() {
-          setInterval(fetchHello, 1000)
-        }
+        fetchBooks();
+
     </script>
 </head>
 <body>
-    <h1>Welcome to My Web Page!</h1>
-    <p>This is a simple fet page that makes a GET request.</p>
-    <button onclick="updateEverySecond()">Say Hello</button>
+    <h1>Showing books from database</h1>
     <div id="result"></div>
 </body>
 </html>
