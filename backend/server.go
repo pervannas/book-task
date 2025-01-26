@@ -23,7 +23,7 @@ func startupAndShutdown(e *echo.Echo, ctx context.Context) {
 	defer stop()
 
 	go func() {
-		if err := e.Start("localhost:1323"); err != nil && err != http.ErrServerClosed {
+		if err := e.Start(":1323"); err != nil && err != http.ErrServerClosed {
 			e.Logger.Fatal("shutting down server")
 		}
 	}()

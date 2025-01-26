@@ -1,30 +1,17 @@
-# Use the official Golang image to build the Go application
-FROM golang:1.23 AS builder
 
-# Set the Current Working Directory inside the container
-WORKDIR /app
+# Build Stage
+FROM golang:alpine3.20 AS builder
 
-# Copy the Go module files and download dependencies
+WORKDIR /build
+
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy the source code into the container
 COPY . .
+RUN go build -o /app .
 
-# Build the Go application
-RUN GOOS=linux GOARCH=amd64 go build -o myapp .
+# Final Stage
+FROM alpine:3.20
 
-# TODO: Should build as a smaller image, but when running bellow scripts it does not work
-# FROM alpine:latest
-# # Set the Current Working Directory inside the container
-# WORKDIR /app
-#
-# # Copy the binary from the builder stage
-# COPY --from=builder /app/myapp .
-#
-# Expose the port the app runs on
-EXPOSE 1323
-
-# Command to run the executable
-CMD ["./myapp"]
-# ENTRYPOINT [ "./myapp" ]
+COPY --from=builder /app /app
+CMD ["/app"]
